@@ -122,7 +122,7 @@
           qs_content += linebreak()
         } else {
           qs_content += text(numbering("(A)", numbering_idx) + " ", weight: "bold")
-          qs_content += choice + h(1fr);
+          qs_content += eval(choice, mode: "markup") + h(1fr);
           numbering_idx += 1
         }
       }
