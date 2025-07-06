@@ -39,10 +39,6 @@ export function QuestionsList(props: QuestionsListProps) {
     }
 
     const renderValue = (_: Question, index: number) => {
-        // had to use react-collapsible because Accordion requires
-        // the children to be AccordionItem and does not work when AccordionItem
-        // is wrapped as grandchild (e.g. here by DraggedItem) which is
-        // difficult to acheive with current implementation
         return (
             <DraggableItem
                 key={index.toString()}
