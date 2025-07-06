@@ -24,8 +24,9 @@ interface QuestionModalProps {
 export function QuestionModal ({ questions, updateQuestion, index, isOpen, onOpenChange, ...props }: QuestionModalProps) {
     let question = questions[index];
 
-    const targetRef = useRef(null);
-    const {moveProps} = useDraggable({targetRef, isDisabled: !isOpen});  // @ts-ignore
+    const targetRef = useRef<HTMLElement>(null);
+    // @ts-ignore
+    const {moveProps} = useDraggable({targetRef, isDisabled: !isOpen});
     const [text, setText] = useState(question.text);
     const [marks, setMarks] = useState(question.marks);
     const [workingSpace, setWorkingSpace] = useState(question.working_space);
