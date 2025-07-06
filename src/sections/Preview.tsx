@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Button } from "@heroui/react";
+import { Button, Spinner } from "@heroui/react";
 import { SaveOutlined } from "@ant-design/icons";
 import { $typst } from "@myriaddreamin/typst.ts";
 import type { Exam } from "../types";
@@ -44,6 +44,9 @@ export default function Preview(props: PreviewProps) {
     return (
         <div className="w-full overflow-y-scroll z-0 h-screen relative flex">
             <div ref={previewDiv}>
+                <div className="px-80 py-80">
+                    <Spinner label="Loading preview..." size="lg"  />
+                </div>
             </div>
             <div className="absolute z-10 w-20 m-10">
                 <Button color="default" onMouseDown={() => {
