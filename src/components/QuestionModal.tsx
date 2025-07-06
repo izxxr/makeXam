@@ -25,7 +25,7 @@ export function QuestionModal ({ questions, updateQuestion, index, isOpen, onOpe
     let question = questions[index];
 
     const targetRef = useRef(null);
-    const {moveProps} = useDraggable({targetRef, isDisabled: !isOpen}); 
+    const {moveProps} = useDraggable({targetRef, isDisabled: !isOpen});  // @ts-ignore
     const [text, setText] = useState(question.text);
     const [marks, setMarks] = useState(question.marks);
     const [workingSpace, setWorkingSpace] = useState(question.working_space);
