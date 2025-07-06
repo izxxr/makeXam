@@ -1,6 +1,6 @@
-# MakeXam
 ![](assets/makeXamHome.png)
 
+# MakeXam
 [**🚀 Try MakeXam**](https://makexam.netlify.app)
 
 MakeXam is a simple exam generation tool.
