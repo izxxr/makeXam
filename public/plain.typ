@@ -43,27 +43,42 @@
 )
 
 // ------------------- HEADER ------------------------- //
-#align([= #title], center)
-#align([== #subtitle], center)
-#linebreak()
-#align(
-    grid(
-    ..for input in input_fields {
-      let ipt_content = stack(
-        text(input, weight: "bold"),
-        dir: ltr,
-        line(length: 100pt, stroke: 0.5pt, start: (8pt, 7pt)),
-      )
-      (ipt_content,)
-    },
-    columns: 2,
-    column-gutter: (1fr, 1fr),
-    row-gutter: 20pt,
-    align: right
-  ),
-  center,
-)
-#linebreak()
+#let header_exists = false;
+
+#if title.len() != 0 {
+  align([= #title], center)
+  header_exists = true
+}
+
+#if subtitle.len() != 0 {
+  align([== #subtitle], center)
+  header_exists = true
+}
+
+#if header_exists {
+  linebreak()
+}
+
+#if input_fields.len() != 0 {
+  align(
+      grid(
+      ..for input in input_fields {
+        let ipt_content = stack(
+          text(input, weight: "bold"),
+          dir: ltr,
+          line(length: 100pt, stroke: 0.5pt, start: (8pt, 7pt)),
+        )
+        (ipt_content,)
+      },
+      columns: 2,
+      column-gutter: (1fr, 1fr),
+      row-gutter: 20pt,
+      align: right
+    ),
+    center,
+  )
+  linebreak()
+}
 
 // ------------------- INSTRUCTIONS ------------------------- //
 #if instructions.len() != 0 {

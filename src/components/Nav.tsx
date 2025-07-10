@@ -54,7 +54,7 @@ export default function Nav() {
       </NavbarContent>
       <NavbarContent justify="end">
         <p className="text-sm text-default-500">
-          Created with 🩶 by @
+          Created with 🩷 by @
           <a className="underline" href="https://github.com/izxxr" target="_blank">izxxr</a> • {" "} 
           <a className="underline" href="https://github.com/izxxr/makeXam" target="_blank">source</a>
         </p>

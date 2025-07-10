@@ -1,55 +1,63 @@
-import { useEffect, useState } from "react";
-import { Form, Input, Divider, Checkbox, Tooltip } from "@heroui/react";
+import { Form, Input, Divider, Checkbox, Tooltip, Button, addToast } from "@heroui/react";
+import { ShareAltOutlined } from "@ant-design/icons";
 import { TextList } from "../components/TextList";
 import { QuestionsList } from "../components/QuestionsList";
-import type { Exam, Question } from "../types";
+import type { Exam } from "../types";
 
 interface OptionsProps {
+    exam: Exam
     setExamData: (arg0: Exam) => undefined
 }
 
 export default function Options(props: OptionsProps) {
-    const [title, setTitle] = useState("");
-    const [subtitle, setSubtitle] = useState("");
-    const [frontPageFormat, setFrontPageFormat] = useState(false);
-    const [includeBranding, setIncludeBranding] = useState(true);
-    const [includePageNumbers, setIncludePageNumbers] = useState(true);
-    const [includeGradingTable, setIncludeGradingTable] = useState(false);
-    const [instructionsHeader, setInstructionsHeader] = useState("");
-    const [instructions, setInstructions]: [string[], any] = useState([]);
-    const [inputFields, setInputFields]: [string[], any] = useState([]);
-    const [questions, setQuestions]: [Question[], any] = useState([]);
+    const updateExamField = (key: string, value: any) => {
+        let newExam = { ...props.exam };
+        // @ts-ignore
+        newExam[key] = value;
 
-    useEffect(() => {
-        let examData: Exam = {
-            title: title,
-            subtitle: subtitle,
-            front_page_format: frontPageFormat,
-            include_branding: includeBranding,
-            include_page_numbers: includePageNumbers,
-            include_grading_table: includeGradingTable,
-            instructions: instructions,
-            instructions_header: instructionsHeader,
-            input_fields: inputFields,
-            questions: questions,
-        };
-        props.setExamData(examData);
-    }, [
-        title,
-        subtitle,
-        frontPageFormat,
-        includeBranding,
-        includePageNumbers,
-        includeGradingTable,
-        inputFields,
-        instructionsHeader,
-        instructions,
-        questions,
-    ])
+        props.setExamData(newExam)
+    }
 
     return (
         <div className="w-full overflow-y-scroll p-10">
             <Form>
+                <div className="mb-3">
+                    <Button
+                        size="sm"
+                        color="default"
+                        onMouseDown={() => {
+                            if (!props.exam) {
+                                addToast({
+                                    title: "No content",
+                                    description: "There's nothing to share. Add some data in exam",
+                                    color: "default",
+                                })
+                                return
+                            }
+
+                            let data = btoa(JSON.stringify(props.exam));
+                            let shareURL = window.location.protocol + "//" + window.location.host + window.location.pathname + '?data=' + data;
+
+                            navigator.clipboard.writeText(shareURL).then(() => {
+                                addToast({
+                                    title: "Copied to Clipboard",
+                                    description: "The exam sharing link has been copied. Exam data can be shared using this link.",
+                                    color: "primary"
+                                })
+                            }).catch(() => {
+                                addToast({
+                                    title: "Error",
+                                    description: "Could not copy share link. Try reloading the page.",
+                                    color: "danger",
+                                })
+                            })
+                        }}
+                    >
+                        <ShareAltOutlined />
+                        Share Exam
+                    </Button>
+                </div>
+                <Divider className="mb-3" />
                 <div className="flex flex-row gap-10 flex-wrap pb-5">
                     <Input
                         label="Title"
@@ -58,8 +66,8 @@ export default function Options(props: OptionsProps) {
                         color="default"
                         className="w-80"
                         placeholder="e.g. MATH 101: Calculus"
-                        value={title}
-                        onChange={(e) => {setTitle(e.target.value)}}
+                        value={props.exam.title}
+                        onChange={(e) => updateExamField("title", e.target.value)}
                     />
                     <Input
                         label="Subtitle"
@@ -67,8 +75,8 @@ export default function Options(props: OptionsProps) {
                         name="subtitle"
                         className="w-80"
                         placeholder="e.g. Final Exam"
-                        value={subtitle}
-                        onChange={(e) => {setSubtitle(e.target.value)}}
+                        value={props.exam.subtitle}
+                        onChange={(e) => updateExamField("subtitle", e.target.value)}
                     />
                 </div>
 
@@ -76,8 +84,8 @@ export default function Options(props: OptionsProps) {
                 <div className="flex flex-row gap-10 flex-wrap pb-10">
                     <Tooltip closeDelay={0} content="Use front page format. Questions begin from second page">
                         <Checkbox
-                            checked={frontPageFormat}
-                            onChange={(e) => {setFrontPageFormat(e.target.checked)}}
+                            isSelected={props.exam.front_page_format}
+                            onChange={(e) => updateExamField("front_page_format", e.target.checked)}
                             size="sm"
                         >
                             Front Page
@@ -85,8 +93,8 @@ export default function Options(props: OptionsProps) {
                     </Tooltip>
                     <Tooltip closeDelay={0} content={"Include \"Generated by makeXam\" branding in the footer"}>
                         <Checkbox
-                            isSelected={includeBranding}
-                            onChange={(e) => {setIncludeBranding(e.target.checked)}}
+                            isSelected={props.exam.include_branding}
+                            onChange={(e) => updateExamField("include_branding", e.target.checked)}
                             size="sm"
                         >
                             MakeXam Branding
@@ -94,8 +102,8 @@ export default function Options(props: OptionsProps) {
                     </Tooltip>
                     <Tooltip closeDelay={0} content={"Include page numbers in the footer"}>
                         <Checkbox
-                            isSelected={includePageNumbers}
-                            onChange={(e) => {setIncludePageNumbers(e.target.checked)}}
+                            isSelected={props.exam.include_page_numbers}
+                            onChange={(e) => updateExamField("include_page_numbers", e.target.checked)}
                             size="sm"
                         >
                             Page Numbers
@@ -103,8 +111,8 @@ export default function Options(props: OptionsProps) {
                     </Tooltip>
                     <Tooltip closeDelay={0} content={"Include a grading table on front page to record individual questions score"}>
                         <Checkbox
-                            checked={includeGradingTable}
-                            onChange={(e) => {setIncludeGradingTable(e.target.checked)}}
+                            isSelected={props.exam.include_grading_table}
+                            onChange={(e) => updateExamField("include_grading_table", e.target.checked)}
                             size="sm"
                         >
                             Grading Table
@@ -120,8 +128,8 @@ export default function Options(props: OptionsProps) {
                     <TextList
                         type="input_field"
                         addNewLabel="New Field"
-                        values={inputFields}
-                        setValues={setInputFields}
+                        values={props.exam.input_fields}
+                        setValues={(values) => updateExamField("input_fields", values)}
                         {...props}
                     />
                 </div>
@@ -134,8 +142,8 @@ export default function Options(props: OptionsProps) {
                     <TextList
                         type="instruction"
                         addNewLabel="New Instruction"
-                        values={instructions}
-                        setValues={setInstructions}
+                        values={props.exam.instructions}
+                        setValues={(values) => updateExamField("instructions", values)}
                         {...props}
                     />
                 </div>
@@ -146,8 +154,8 @@ export default function Options(props: OptionsProps) {
                     className="w-80 pb-10"
                     description="Defines the title for instructions section."
                     size="sm"
-                    value={instructionsHeader}
-                    onChange={(e) => setInstructionsHeader(e.target.value)}
+                    value={props.exam.instructions_header}
+                    onChange={(e) => updateExamField("instructions_header", e.target.value)}
                 />
 
                 {/* ---- Questions --------- */}
@@ -156,8 +164,8 @@ export default function Options(props: OptionsProps) {
                 <Divider className="mb-4" />
                 <div className="pb-10">
                     <QuestionsList
-                        questions={questions}
-                        setQuestions={setQuestions}
+                        questions={props.exam.questions}
+                        setQuestions={(questions) => updateExamField("questions", questions)}
                         {...props}
                     />
                 </div>
