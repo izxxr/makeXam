@@ -19,6 +19,7 @@ export default function App() {
         title: "",
         subtitle: ""
     });
+    const [fromData, setFromData] = useState(false);
 
     useEffect(() => {
         const options = new URLSearchParams(window.location.search);
@@ -26,6 +27,7 @@ export default function App() {
 
         if (b64data) {
             setExam(JSON.parse(atob(b64data)));
+            setFromData(true);
         }
     }, [])
 
@@ -34,7 +36,7 @@ export default function App() {
             <Navbar />
             <main className="overflow-hidden flex flex-row h-screen items-stretch grow shrink basis-[0%]">
                 <DndProvider backend={HTML5Backend}>
-                    <Options exam={exam} setExamData={setExam} />
+                    <Options fromData={fromData} exam={exam} setExamData={setExam} />
                 </DndProvider>
                 <Preview exam={exam} />
             </main>

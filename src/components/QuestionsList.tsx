@@ -5,6 +5,7 @@ import { QuestionListItem } from "./QuestionListItem";
 import type { Question } from "../types";
 
 interface QuestionsListProps {
+    fromData: boolean
     questions: Question[]
     setQuestions: (arg0: Question[]) => void
 }
@@ -46,15 +47,16 @@ export function QuestionsList(props: QuestionsListProps) {
                 id={index.toString()}
                 moveItem={moveQuestion}
                 type="question"
-                renderComponent={(ref, dataHandlerId, props, opacity) => {
+                renderComponent={(ref, dataHandlerId, draggableProps, opacity) => {
                     return <QuestionListItem
-                                index={props.index}
+                                index={draggableProps.index}
                                 dragRef={ref}
                                 opacity={opacity}
                                 dataHandlerId={dataHandlerId}
                                 questions={questions}
                                 updateQuestion={updateQuestion}
                                 removeQuestion={() => removeQuestion(index)}
+                                fromData={props.fromData}
                             />
                 }}
             />

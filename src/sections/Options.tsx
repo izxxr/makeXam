@@ -5,6 +5,7 @@ import { QuestionsList } from "../components/QuestionsList";
 import type { Exam } from "../types";
 
 interface OptionsProps {
+    fromData: boolean
     exam: Exam
     setExamData: (arg0: Exam) => undefined
 }

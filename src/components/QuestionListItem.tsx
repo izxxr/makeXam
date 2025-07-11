@@ -11,15 +11,16 @@ interface QuestionListItemProps {
     dragRef: any
     dataHandlerId: Identifier | null,
     opacity: number
+    fromData: boolean
     removeQuestion: () => void
     updateQuestion: (arg0: number, arg1: Question) => void
 }
 
 export function QuestionListItem (props: QuestionListItemProps) {
     const {isOpen, onOpen, onOpenChange} = useDisclosure();
-    const questionCreate = useFirstRender();
+    const firstRender = useFirstRender();
 
-    if (questionCreate) {
+    if (firstRender && !props.fromData) {
         onOpen();
     }
 
