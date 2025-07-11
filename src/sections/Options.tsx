@@ -27,15 +27,6 @@ export default function Options(props: OptionsProps) {
                         size="sm"
                         color="default"
                         onMouseDown={() => {
-                            if (!props.exam) {
-                                addToast({
-                                    title: "No content",
-                                    description: "There's nothing to share. Add some data in exam",
-                                    color: "default",
-                                })
-                                return
-                            }
-
                             let data = btoa(JSON.stringify(props.exam));
                             let shareURL = window.location.protocol + "//" + window.location.host + window.location.pathname + '?data=' + data;
 
