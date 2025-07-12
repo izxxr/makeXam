@@ -71,7 +71,14 @@ export function QuestionModal ({ questions, updateQuestion, index, isOpen, onOpe
                                     minValue={0}
                                     description={"The score this question carries"}
                                     value={marks}
-                                    onValueChange={(v) => setMarks(v)}
+                                    onClear={() => setMarks(undefined)}
+                                    onValueChange={(v) => {
+                                        if (v <= 0 || Number.isNaN(v)) {
+                                            setMarks(undefined)
+                                        } else {
+                                            setMarks(v)
+                                        }
+                                    }}
                                 />
                                 <NumberInput
                                     isClearable
@@ -80,7 +87,14 @@ export function QuestionModal ({ questions, updateQuestion, index, isOpen, onOpe
                                     minValue={0}
                                     description={"Number of lines to provide for showing working"}
                                     value={workingSpace}
-                                    onValueChange={(v) => setWorkingSpace(v)}
+                                    onClear={() => setWorkingSpace(undefined)}
+                                    onValueChange={(v) => {
+                                        if (v < 1 || Number.isNaN(v)) {
+                                            setWorkingSpace(undefined)
+                                        } else {
+                                            setWorkingSpace(v)
+                                        }
+                                    }}
                                 />
                             </div>
                             <h1 className="font-bold text-md text-default-800">Multiple Choices</h1>
