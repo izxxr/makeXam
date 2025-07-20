@@ -138,13 +138,13 @@
       let numbering_idx = 1;
 
       for choice in choices.at(qs.id) {
-        if choice.content == 0 {
+        if choice.onNewLine {
           qs_content += linebreak()
-        } else {
-          qs_content += text(numbering("(A)", numbering_idx) + " ", weight: "bold")
-          qs_content += eval(choice.content, mode: "markup") + h(1fr);
-          numbering_idx += 1
         }
+
+        qs_content += text(numbering("(A)", numbering_idx) + " ", weight: "bold")
+        qs_content += eval(choice.content, mode: "markup") + h(1fr);
+        numbering_idx += 1
       }
 
       qs_content += "\n\n"

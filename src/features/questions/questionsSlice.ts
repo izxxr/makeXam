@@ -29,7 +29,7 @@ export const questionsSlice = createSlice({
         updateQuestion: (state, updatePayload: PayloadAction<Question>) => {
             state.value = state.value.map((question) => {
                 if (question.id == updatePayload.payload.id) {
-                    return updatePayload.payload
+                    return {...question, ...updatePayload.payload}
                 }
 
                 return question

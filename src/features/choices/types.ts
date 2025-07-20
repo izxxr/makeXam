@@ -1,6 +1,8 @@
 import type { TextField } from "../../types"
 
-export default interface Choice extends TextField {}
+export default interface Choice extends TextField {
+    onNewLine: boolean
+}
 
 export type UnidentifiedChoice = Omit<Choice, "id">
 

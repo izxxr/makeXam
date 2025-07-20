@@ -30,7 +30,7 @@ export const inputFieldsSlice = createSlice({
         updateInputField: (state, updatePayload: PayloadAction<InputField>) => {
             state.value = state.value.map((field) => {
                 if (field.id == updatePayload.payload.id) {
-                    return updatePayload.payload
+                    return {...field, ...updatePayload.payload}
                 }
 
                 return field

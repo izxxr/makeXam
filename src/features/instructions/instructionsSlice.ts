@@ -30,7 +30,7 @@ export const instructionsSlice = createSlice({
         updateInstruction: (state, updatePayload: PayloadAction<Instruction>) => {
             state.value = state.value.map((inst) => {
                 if (inst.id == updatePayload.payload.id) {
-                    return updatePayload.payload
+                    return {...inst, ...updatePayload.payload}
                 }
 
                 return inst

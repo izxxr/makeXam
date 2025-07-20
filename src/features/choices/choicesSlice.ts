@@ -38,12 +38,12 @@ export const choicesSlice = createSlice({
             delete state.value[action.payload.questionId]
         },
 
-        updateChoice: (state, action: PayloadAction<ChoiceAction<Choice>>) => {
+        updateChoice: (state, action: PayloadAction<ChoiceAction<Partial<Choice>>>) => {
             let qId = action.payload.questionId
 
             state.value[qId]= state.value[qId].map((choice) => {
                 if (choice.id == action.payload.data.id) {
-                    return action.payload.data
+                    return {...choice, ...action.payload.data}
                 }
 
                 return choice

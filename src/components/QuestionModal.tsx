@@ -9,11 +9,10 @@ import {
     useDraggable,
 } from "@heroui/react";
 import * as questionActions from "../features/questions/questionsSlice";
-import * as choicesActions from "../features/choices/choicesSlice";
 import { SaveOutlined } from "@ant-design/icons";
 import { useRef, useState, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../hooks";
-import { TextList } from "./TextList";
+import { ChoicesList } from "./ChoicesList";
 import type { UnidentifiedQuestion } from "../features/questions/types";
 import type Question from "../features/questions/types";
 
@@ -63,7 +62,18 @@ export function QuestionModal ({ question, isOpen, onOpenChange }: QuestionModal
                         <ModalBody>
                             <Textarea
                                 label="Content"
-                                description="Typst markup syntax is supported, you can include mathematical equations, code blocks, and other elements."
+                                description={
+                                    <h1>
+                                        <a
+                                            href="https://typst.app/docs/reference/syntax/#markup"
+                                            className="underline text-blue-300"
+                                            target="_blank"
+                                        >
+                                                Typst markup syntax
+                                        </a> is supported in question and choices content, you can include
+                                        mathematical equations, code blocks, and other elements.
+                                    </h1>
+                                }
                                 placeholder="What is 2 + 2?"
                                 className="pb-2"
                                 value={text}
@@ -104,26 +114,12 @@ export function QuestionModal ({ question, isOpen, onOpenChange }: QuestionModal
                                 />
                             </div>
                             <h1 className="font-bold text-md text-default-800">Multiple Choices</h1>
-                            <h1 className="text-sm text-default-600">Create choices for multiple choice question.</h1>
+                            <h1 className="text-sm text-default-600">
+                                Create choices for multiple choice question. Multi-line choices are
+                                supported.
+                            </h1>
                             <Divider />
-                            <TextList
-                                values={choices}
-                                createValue={(choice) => {
-                                    dispatch(choicesActions.createChoice({ questionId: question.id, data: choice }))
-                                }}
-                                removeValue={(choiceId) => {
-                                    dispatch(choicesActions.removeChoice({ questionId: question.id, data: choiceId }))
-                                }}
-                                updateValue={(choice) => {
-                                    dispatch(choicesActions.updateChoice({ questionId: question.id, data: choice }))
-                                }}
-                                moveValue={(moveAction) => {
-                                    dispatch(choicesActions.moveChoice({ questionId: question.id, data: moveAction }))
-                                }}
-                                type="question-choice"
-                                addNewLabel="Add Choice"
-                                useActions={false}
-                            />
+                            <ChoicesList questionId={question.id} />
                             <Divider className="mb-5" />
                             <div className="flex flex-row gap-2 justify-center">
                                 {/* <div className="flex flex-col justify-around"></div> */}
