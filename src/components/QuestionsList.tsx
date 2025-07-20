@@ -2,61 +2,29 @@ import { Button } from "@heroui/react";
 import { PlusOutlined } from "@ant-design/icons";
 import { DraggableItem } from "./DraggableItem";
 import { QuestionListItem } from "./QuestionListItem";
-import type { Question } from "../types";
+import { useAppDispatch, useAppSelector } from "../hooks";
+import * as questionActions from "../features/questions/questionsSlice"; 
+import type Question  from "../features/questions/types";
 
-interface QuestionsListProps {
-    fromData: boolean
-    questions: Question[]
-    setQuestions: (arg0: Question[]) => void
-}
 
-export function QuestionsList(props: QuestionsListProps) {
-    const [questions, setQuestions] = [props.questions, props.setQuestions]
+export function QuestionsList() {
+    const dispatch = useAppDispatch();
+    const questions = useAppSelector((state) => state.questions.value)
 
-    const addQuestion = (question: Question) => {
-        setQuestions(questions.concat([question]))
-    }
-
-    const removeQuestion = (curIdx: number) => {
-        setQuestions(questions.filter((_, idx) => idx != curIdx ))
-    }
-
-    const updateQuestion = (index: number, newQuestion: Question) => {
-        setQuestions(
-            questions
-                .slice(0, index)
-                .concat([newQuestion])
-                .concat(questions.slice(index + 1))
-        )
-    }
-
-    const moveQuestion = (prevIndex: number, newIndex: number) => {
-        let copy = questions.concat([])
-        let old = copy[prevIndex];
-        copy[prevIndex] = copy[newIndex];
-        copy[newIndex] = old;
-
-        setQuestions(copy);
-    }
-
-    const renderValue = (_: Question, index: number) => {
+    const renderValue = (question: Question, index: number) => {
         return (
             <DraggableItem
-                key={index.toString()}
+                key={question.id}
+                id={question.id}
                 index={index}
-                id={index.toString()}
-                moveItem={moveQuestion}
+                moveItem={(fromIndex, toIndex) => dispatch(questionActions.moveQuestion({ fromIndex: fromIndex, toIndex: toIndex }))}
                 type="question"
-                renderComponent={(ref, dataHandlerId, draggableProps, opacity) => {
+                renderComponent={(ref, dataHandlerId, _, opacity) => {
                     return <QuestionListItem
-                                index={draggableProps.index}
+                                question={question}
                                 dragRef={ref}
                                 opacity={opacity}
                                 dataHandlerId={dataHandlerId}
-                                questions={questions}
-                                updateQuestion={updateQuestion}
-                                removeQuestion={() => removeQuestion(index)}
-                                fromData={props.fromData}
                             />
                 }}
             />
@@ -69,7 +37,7 @@ export function QuestionsList(props: QuestionsListProps) {
                 {questions.map((v, i) => renderValue(v, i))}
             </div>
             <Button size="sm" onMouseDown={() => {
-                addQuestion({ text: "" });
+                dispatch(questionActions.createQuestion({ text: "" }));
             }}>
                 <PlusOutlined />
                 New Question

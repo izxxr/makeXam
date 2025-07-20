@@ -8,34 +8,38 @@ import {
     Divider,
     useDraggable,
 } from "@heroui/react";
+import * as questionActions from "../features/questions/questionsSlice";
+import * as choicesActions from "../features/choices/choicesSlice";
 import { SaveOutlined } from "@ant-design/icons";
 import { useRef, useState, useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "../hooks";
 import { TextList } from "./TextList";
-import type { Question } from "../types";
+import type { UnidentifiedQuestion } from "../features/questions/types";
+import type Question from "../features/questions/types";
 
 interface QuestionModalProps {
-    questions: Question[]
-    index: number
+    question: Question
     isOpen: boolean
     onOpenChange: any
-    updateQuestion: (arg0: number, arg1: Question) => void
 }
 
-export function QuestionModal ({ questions, updateQuestion, index, isOpen, onOpenChange, ...props }: QuestionModalProps) {
-    let question = questions[index];
-
+export function QuestionModal ({ question, isOpen, onOpenChange }: QuestionModalProps) {
     const targetRef = useRef<HTMLElement>(null);
+    const dispatch = useAppDispatch();
+    const questions = useAppSelector(state => state.questions.value)
+    const questionsChoices = useAppSelector(state => state.choices.value)
+    const choices = questionsChoices[question.id]
+
     // @ts-ignore
     const {moveProps} = useDraggable({targetRef, isDisabled: !isOpen});
     const [text, setText] = useState(question.text);
     const [marks, setMarks] = useState(question.marks);
     const [workingSpace, setWorkingSpace] = useState(question.working_space);
-    const [choices, setChoices]: [string[], any] = useState(question.choices || []);
-    const [newQuestion, setNewQuestion]: [Question, any] = useState({ ...question });
+    const [newQuestion, setNewQuestion]: [UnidentifiedQuestion, any] = useState({ ...question });
 
     useEffect(() => {
         setNewQuestion({ text, marks, choices, working_space: workingSpace })
-    }, [text, marks, workingSpace, choices])
+    }, [text, marks, workingSpace])
 
     return (
         <Modal
@@ -46,14 +50,16 @@ export function QuestionModal ({ questions, updateQuestion, index, isOpen, onOpe
             size="2xl"
             isOpen={isOpen}
             onOpenChange={(open) => {
-                updateQuestion(index, newQuestion);
+                dispatch(questionActions.updateQuestion({id: question.id, ...newQuestion}));
                 onOpenChange(open);
             }}
         >
             <ModalContent>
                 {() => (
                     <>
-                        <ModalHeader {...moveProps} className="flex flex-col gap-1">Question {index + 1}</ModalHeader>
+                        <ModalHeader {...moveProps} className="flex flex-col gap-1">
+                            Question {questions.findIndex((q) => q.id == question.id) + 1}
+                        </ModalHeader>
                         <ModalBody>
                             <Textarea
                                 label="Content"
@@ -100,7 +106,24 @@ export function QuestionModal ({ questions, updateQuestion, index, isOpen, onOpe
                             <h1 className="font-bold text-md text-default-800">Multiple Choices</h1>
                             <h1 className="text-sm text-default-600">Create choices for multiple choice question.</h1>
                             <Divider />
-                            <TextList values={choices} setValues={setChoices} type="question-choice" addNewLabel="Add Choice" {...props} />
+                            <TextList
+                                values={choices}
+                                createValue={(choice) => {
+                                    dispatch(choicesActions.createChoice({ questionId: question.id, data: choice }))
+                                }}
+                                removeValue={(choiceId) => {
+                                    dispatch(choicesActions.removeChoice({ questionId: question.id, data: choiceId }))
+                                }}
+                                updateValue={(choice) => {
+                                    dispatch(choicesActions.updateChoice({ questionId: question.id, data: choice }))
+                                }}
+                                moveValue={(moveAction) => {
+                                    dispatch(choicesActions.moveChoice({ questionId: question.id, data: moveAction }))
+                                }}
+                                type="question-choice"
+                                addNewLabel="Add Choice"
+                                useActions={false}
+                            />
                             <Divider className="mb-5" />
                             <div className="flex flex-row gap-2 justify-center">
                                 {/* <div className="flex flex-col justify-around"></div> */}

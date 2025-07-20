@@ -2,11 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Button, Spinner } from "@heroui/react";
 import { SaveOutlined } from "@ant-design/icons";
 import { $typst } from "@myriaddreamin/typst.ts";
-import type { Exam } from "../types";
-
-interface PreviewProps  {
-    exam: Exam
-}
+import { useAppSelector } from "../hooks";
 
 async function getMainContent () {
     let res = await fetch("/plain.typ")
@@ -16,9 +12,10 @@ async function getMainContent () {
     return await res.text();
 }
 
-export default function Preview(props: PreviewProps) {
+export default function Preview() {
     const [mainContent, setMainContent] = useState("");
     const previewDiv = useRef<HTMLDivElement>(null);
+    const examData = useAppSelector(state => state.examData.value)
 
     useEffect(() => {
         $typst.setCompilerInitOptions({
@@ -33,13 +30,13 @@ export default function Preview(props: PreviewProps) {
     }, [])
 
     useEffect(() => {
-        if (previewDiv.current) {
+        if (previewDiv.current && mainContent) {
             $typst.canvas(
                 previewDiv.current,
-                { mainContent: mainContent, inputs: {exam: JSON.stringify(props.exam)} }
+                { mainContent: mainContent, inputs: {exam: JSON.stringify(examData)} }
             )
         }
-    }, [props.exam, mainContent]);
+    }, [examData, mainContent]);
 
     return (
         <div className="w-full overflow-y-scroll z-0 h-screen relative flex">
@@ -50,7 +47,7 @@ export default function Preview(props: PreviewProps) {
             </div>
             <div className="absolute z-10 w-20 m-10">
                 <Button color="default" onMouseDown={() => {
-                    $typst.pdf({ mainContent: mainContent, inputs: {exam: JSON.stringify(props.exam)} })
+                    $typst.pdf({ mainContent: mainContent, inputs: {exam: JSON.stringify(examData)} })
                         .then((v) => {
                             if (!v) {
                                 return

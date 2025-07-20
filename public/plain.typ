@@ -1,24 +1,27 @@
 #let exam = json(bytes(sys.inputs.exam))
 
 // Page setup
-#let include_branding = exam.at("include_branding", default: true)
-#let include_page_numbers = exam.at("page_numbers", default: true)
-#let front_page_format = exam.at("front_page_format", default: false)
+#let include_branding = exam.at("includeBranding", default: true)
+#let include_page_numbers = exam.at("includePageNumbers", default: true)
+#let front_page_format = exam.at("frontPageFormat", default: false)
 
 // Header Configuration
 #let title = exam.at("title", default: "")
 #let subtitle = exam.at("subtitle", default: "")
-#let input_fields = exam.at("input_fields", default: ())
+#let input_fields = exam.at("inputFields", default: ())
 
 // Instructions
 #let instructions = exam.at("instructions", default: ())
-#let instructions_header = exam.at("instructions_header", default: "Instructions")
+#let instructions_header = exam.at("instructionsHeader", default: "Instructions")
 
 // Grading Table
-#let include_grading_table = exam.at("include_grading_table", default: false)
+#let include_grading_table = exam.at("includeGradingTable", default: false)
 
 // Questions
 #let questions = exam.at("questions", default: ())
+
+// Choices
+#let choices = exam.at("choices", default: ())
 
 
 // ------------------- PAGE SETUP ------------------------- //
@@ -62,9 +65,9 @@
 #if input_fields.len() != 0 {
   align(
       grid(
-      ..for input in input_fields {
+      ..for field in input_fields {
         let ipt_content = stack(
-          text(input, weight: "bold"),
+          text(field.content, weight: "bold"),
           dir: ltr,
           line(length: 100pt, stroke: 0.5pt, start: (8pt, 7pt)),
         )
@@ -84,7 +87,9 @@
 #if instructions.len() != 0 {
   [
     === #underline(instructions_header)
-    #pad(enum(..instructions), top: 4pt)
+    #pad(enum(..for inst in instructions {
+      (inst.content,)
+    }), top: 4pt)
   ]
 }
 
@@ -128,16 +133,16 @@
       qs_content += linebreak() * qs.working_space;
     }
 
-    if qs.at("choices", default: none) != none {
+    if choices.at(qs.id, default: none) != none {
       qs_content += "\n"
       let numbering_idx = 1;
 
-      for (idx, choice) in qs.choices.enumerate() {
-        if choice == 0 {
+      for choice in choices.at(qs.id) {
+        if choice.content == 0 {
           qs_content += linebreak()
         } else {
           qs_content += text(numbering("(A)", numbering_idx) + " ", weight: "bold")
-          qs_content += eval(choice, mode: "markup") + h(1fr);
+          qs_content += eval(choice.content, mode: "markup") + h(1fr);
           numbering_idx += 1
         }
       }
